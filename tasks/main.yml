@@ -1,0 +1,19 @@
+---
+- name: Downloads Hashicorp's vault
+  get_url: >
+    url="{{ install.download_location }}/{{ vault.version }}/vault_{{ vault.version }}_linux_{{ vault.arch }}.zip"
+    dest="/tmp/"
+    mode=0755
+  sudo: no
+  tags:
+    - hashicorp
+    - vault
+    - install
+
+- name: Installs Hashicorp's vault
+  shell: unzip -u -d {{ install.dir }} /tmp/vault_{{ vault.version }}_linux_{{ vault.arch }}.zip ; chmod 770 {{ install.dir }}/vault ; chown root:staff {{ install.dir }}/vault
+  sudo: yes
+  tags:
+    - hashicorp
+    - vault
+    - install
