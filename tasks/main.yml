@@ -1,19 +1,39 @@
 ---
-- name: Downloads Hashicorp's vault
+- name: Downloads Package
   get_url: >
-    url="{{ install.download_location }}/{{ vault.version }}/vault_{{ vault.version }}_linux_{{ vault.arch }}.zip"
-    dest="/tmp/"
+    url="{{ install.download_location}}/{{ app.version }}/{{ app.name }}_{{ app.version }}_{{ app.arch }}.zip"
+    dest="/tmp/{{ app.name }}_{{ app.version }}_{{ app.arch }}.zip"
     mode=0755
   sudo: no
   tags:
     - hashicorp
     - vault
     - install
+    - download
 
-- name: Installs Hashicorp's vault
-  shell: unzip -u -d {{ install.dir }} /tmp/vault_{{ vault.version }}_linux_{{ vault.arch }}.zip ; chmod 770 {{ install.dir }}/vault ; chown root:staff {{ install.dir }}/vault
+- name: Unpacks to location
+  unarchive: >
+    src=/tmp/{{ app.name }}_{{ app.version }}_{{ app.arch }}.zip
+    dest={{ install.dir }}
+    copy=no
+    mode=755
   sudo: yes
   tags:
     - hashicorp
     - vault
     - install
+    - unarchive
+
+- name: Fix permissions on files (Workaround while waiting for 2.0)
+  file: path={{ install.dir }}/{{ item }}
+    owner={{ app.file_owner | default('root') }}
+    group={{ app.file_group | default('root') }}
+    mode=755
+  sudo: yes
+  with_items:
+    - "{{ install.file_list }}"
+  tags:
+    - hashicorp
+    - vault
+    - install
+    - workaround

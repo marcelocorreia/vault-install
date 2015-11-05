@@ -1,8 +1,12 @@
 ---
-vault:
+app:
+  name: vault
   version: 0.3.1
-  arch: amd64
+  arch: linux_amd64
+  file_group: vagrant
 
 install:
   dir : /usr/local/bin
   download_location: https://releases.hashicorp.com/vault
+  file_list:
+    - vault
